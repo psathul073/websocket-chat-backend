@@ -184,7 +184,7 @@ wss.on('connection', (ws) => {
                 const roomRef = db.collection('rooms').doc(roomName);
                 const roomDoc = await roomRef.get();
 
-                if (!roomDoc.exists) {
+                if (!roomDoc.exists && uid) {
 
                     await roomRef.set({
                         password: password && await bcrypt.hash(password, saltRounds) || null,
