@@ -334,7 +334,7 @@ wss.on('connection', (ws) => {
 
                     if (!roomDoc.exists) return; // No room exists
 
-                    if (roomDoc.data().owner !== uid) {
+                    if (roomDoc.data().createdBy !== uid) {
                         ws.send(JSON.stringify({ type: "error", message: "Only the creator can delete this room." }));
                         return;
                     };
@@ -353,6 +353,8 @@ wss.on('connection', (ws) => {
 
                     // Delete room doc.
                     await roomRef.delete();
+                    console.log(`✅ ${roomName} is deleted `);
+                    
 
                     sendRoomList(); // Update room list after deletion
 
