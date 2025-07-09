@@ -7,7 +7,7 @@ import cloudinary from './config/cloudinary.js';
 import fs from 'fs';
 import deleteMediaByMessages from './utils/mediaDelete.js';
 import bcrypt from 'bcrypt';
-import { type } from 'os';
+import http from "http";
 
 
 const app = express();
@@ -16,7 +16,7 @@ const saltRounds = 10;
 const db = admin.firestore();
 db.settings({ ignoreUndefinedProperties: true }); // To prevents firestore undefined situation.
 
-// app.use('/uploads', express.static('uploads'));
+app.use(express.static("public"));
 app.use(cors());
 app.use(express.json()); // Parses incoming JSON requests.
 app.set('trust proxy', 1); // Important for Render working...
@@ -139,13 +139,14 @@ app.post('/user/update', imageUpload.single('avatar'), async (req, res) => {
 
 
 // Start HTTP server.
-const server = app.listen(PORT, () => console.log(`Server is running on ${PORT} ☑️`))
+
+// Create HTTP server
+const server = http.createServer(app);
 
 // Attach WebSocket server to same HTTP server.
 const wss = new WebSocketServer({ server });
 
 // WebSocket logic.
-
 wss.on('connection', (ws) => {
 
     console.log("Client connected ✅");
@@ -438,3 +439,5 @@ wss.on('connection', (ws) => {
     ws.on('close', () => { console.log("Client disconnected ❌"); });
 
 });
+
+server.listen(PORT, () => console.log(`Server is running on ${PORT} ☑️`));
